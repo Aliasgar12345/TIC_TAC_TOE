@@ -37,6 +37,9 @@ You can play the game live here:
 [🎮 play game](https://aliasgar12345.github.io/TIC_TAC_TOE/)
 
 ---
+Check out the source code here:  
+[https://github.com/aliasgar12345/TIC_TAC_TOE](https://github.com/aliasgar12345/TIC_TAC_TOE)
+---
 
 Feel free to clone or fork this repository to customize or improve the game.  
 Have fun playing! 🎉
