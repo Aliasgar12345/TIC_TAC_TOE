@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tic Tac Toe - Modern Theme</title>
+  <style>
+    /* Reset & Body */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      margin: 0; padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h2 {
+      font-weight: 700;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    /* Buttons */
+    button {
+      background: #6c63ff;
+      border: none;
+      border-radius: 30px;
+      padding: 12px 30px;
+      margin: 12px;
+      font-size: 1.2em;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(108, 99, 255, 0.4);
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    button:hover {
+      background: #5148d6;
+      box-shadow: 0 8px 20px rgba(81, 72, 214, 0.6);
+      transform: translateY(-3px);
+    }
+
+    /* Home & Game Screen containers */
+    #homeScreen, #gameScreen {
+      margin-top: 60px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Game board styling */
+    #gameBoard {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 15px;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .cell {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      font-size: 3.5em;
+      font-weight: 900;
+      color: #4a4a4a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.25s ease, transform 0.15s ease;
+      position: relative;
+    }
+
+    .cell:hover {
+      background-color: #c4c4ff;
+      transform: scale(1.08);
+      box-shadow: 0 0 15px #6c63ff;
+    }
+
+    /* Modal overlay */
+    #overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      z-index: 900;
+    }
+
+    /* Result Modal */
+    #resultModal {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: #6c63ff;
+      border-radius: 25px;
+      padding: 40px 60px;
+      box-shadow: 0 12px 40px rgba(108, 99, 255, 0.7);
+      color: white;
+      font-weight: 700;
+      font-size: 2em;
+      text-align: center;
+      display: none;
+      z-index: 1000;
+      user-select: none;
+      animation: modalPop 0.4s ease forwards;
+    }
+
+    @keyframes modalPop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -60%) scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    #resultText {
+      margin-bottom: 25px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+    }
+
+    #resultModal button {
+      background: white;
+      color: #6c63ff;
+      font-weight: 700;
+      padding: 10px 25px;
+      margin: 0 12px;
+      box-shadow: none;
+      border-radius: 20px;
+      font-size: 1.1em;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    #resultModal button:hover {
+      background-color: #5148d6;
+      color: white;
+      box-shadow: 0 6px 15px rgba(81, 72, 214, 0.8);
+      transform: translateY(-3px);
+    }
+    /* Existing styles retained */
+
+/* Make the container and game board responsive */
+#gameScreen, #homeScreen {
+  width: 90%;
+  max-width: 350px;
+}
+
+/* Adjust game board grid cells size on smaller screens */
+#gameBoard {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1 / 1; /* Keeps the board square */
+}
+
+.cell {
+  font-size: 6vw; /* Responsive font size */
+  min-height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+/* Responsive font sizes and button sizes */
+button {
+  font-size: 4vw;
+  padding: 10px 20px;
+  min-width: 120px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+h2 {
+  font-size: 5vw;
+  text-align: center;
+}
+
+/* Media query for larger screens to keep previous sizes */
+@media(min-width: 600px) {
+  #gameScreen, #homeScreen {
+    width: 320px;
+  }
+  #gameBoard {
+    max-width: 320px;
+  }
+  .cell {
+    font-size: 3.5em;
+    min-height: 100px;
+  }
+  button {
+    font-size: 1.2em;
+    min-width: auto;
+    padding: 12px 30px;
+  }
+  h2 {
+    font-size: 1.5em;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Home Screen -->
+  <div id="homeScreen">
+    <h2>Choose Game Mode</h2>
+    <button id="playVsFriend">Play vs Friend</button>
+    <button id="playVsAI">Play vs Computer</button>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="gameScreen" style="display:none;">
+    <div id="gameBoard">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+    <button id="resetButton">Reset Game</button>
+  </div>
+
+  <!-- Result Modal & Overlay -->
+  <div id="overlay"></div>
+  <div id="resultModal">
+    <div id="resultText"></div>
+    <button id="closeModal">Play Again</button>
+    <button id="homeButton">Home</button>
+  </div>
+
+  <script>
+    const homeScreen = document.getElementById('homeScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const playVsFriendBtn = document.getElementById('playVsFriend');
+    const playVsAIBtn = document.getElementById('playVsAI');
+    const resetButton = document.getElementById('resetButton');
+    const cells = document.querySelectorAll('.cell');
+    const resultModal = document.getElementById('resultModal');
+    const resultText = document.getElementById('resultText');
+    const closeModal = document.getElementById('closeModal');
+    const homeButton = document.getElementById('homeButton');
+    const overlay = document.getElementById('overlay');
+
+    let playVsAI = false;
+    let turn = 'X';
+    let gameOver = false;
+
+    playVsFriendBtn.addEventListener('click', () => {
+      playVsAI = false;
+      startGame();
+    });
+
+    playVsAIBtn.addEventListener('click', () => {
+      playVsAI = true;
+      startGame();
+    });
+
+    resetButton.addEventListener('click', resetGame);
+
+    homeButton.addEventListener('click', () => {
+      hideResult();
+      showHome();
+    });
+
+    closeModal.addEventListener('click', () => {
+      hideResult();
+      resetGame();
+    });
+
+    // Hide modal when clicking outside modal box
+    overlay.addEventListener('click', () => {
+      hideResult();
+    });
+
+    function showHome() {
+      gameScreen.style.display = 'none';
+      homeScreen.style.display = 'flex';
+      resetGame();
+    }
+
+    function startGame() {
+      homeScreen.style.display = 'none';
+      gameScreen.style.display = 'flex';
+      resetGame();
+    }
+
+    function resetGame() {
+      cells.forEach(cell => cell.textContent = '');
+      turn = 'X';
+      gameOver = false;
+      hideResult();
+    }
+
+    function showResult(message) {
+      resultText.textContent = message;
+      resultModal.style.display = 'block';
+      overlay.style.display = 'block';
+      gameOver = true;
+    }
+
+    function hideResult() {
+      resultModal.style.display = 'none';
+      overlay.style.display = 'none';
+      gameOver = false;
+    }
+
+    function checkWin(player) {
+      const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      return winPatterns.some(pattern => 
+        pattern.every(index => cells[index].textContent === player)
+      );
+    }
+
+    function isDraw() {
+      return [...cells].every(cell => cell.textContent !== '');
+    }
+
+    function playerMove(e) {
+      if (gameOver) return;
+      if (e.target.textContent === '') {
+        e.target.textContent = turn;
+        if (checkWin(turn)) {
+          showResult(turn === 'X' ? '🎉 You Win!' : '💔 You Lose!');
+          return;
+        }
+        if (isDraw()) {
+          showResult('🤝 It’s a Draw!');
+          return;
+        }
+        turn = turn === 'X' ? 'O' : 'X';
+
+        if (playVsAI && turn === 'O') {
+          setTimeout(computerMove, 500);
+        }
+      }
+    }
+
+    function computerMove() {
+      if (gameOver) return;
+      let emptyCells = [...cells].filter(c => c.textContent === '');
+
+      // 1. Win if possible
+      for (let cell of emptyCells) {
+        cell.textContent = 'O';
+        if (checkWin('O')) {
+          showResult('💔 You Lose!');
+          return;
+        }
+        cell.textContent = '';
+      }
+
+      // 2. Block if player about to win
+      for (let cell of emptyCells) {
+        cell.textContent = 'X';
+        if (checkWin('X')) {
+          cell.textContent = 'O';
+          turn = 'X';
+          return;
+        }
+        cell.textContent = '';
+      }
+
+      // 3. Random move
+      const randCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      randCell.textContent = 'O';
+
+      if (checkWin('O')) {
+        showResult('💔 You Lose!');
+        return;
+      }
+
+      if (isDraw()) {
+        showResult('🤝 It’s a Draw!');
+        return;
+      }
+
+      turn = 'X';
+    }
+
+    cells.forEach(cell => cell.addEventListener('click', playerMove));
+  </script>
+
+</body>
+</html>
